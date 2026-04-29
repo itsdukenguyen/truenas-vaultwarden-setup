@@ -1,106 +1,111 @@
 # Vaultwarden on TrueNAS Scale - Home Lab Setup
 
-Complete documentation for installing, configuring, and maintaining **Vaultwarden** (Bitwarden-compatible password manager) on my TrueNAS Scale server in my home lab.
+![Vaultwarden](https://img.shields.io/badge/Vaultwarden-000000?style=for-the-badge&logo=bitwarden&logoColor=white)
+![TrueNAS](https://img.shields.io/badge/TrueNAS-Scale-00A3E0?style=for-the-badge&logo=truenas)
+
+Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bitwarden-compatible password manager) on my **TrueNAS Scale** server as part of my home lab.
 
 **Last Updated:** April 29, 2026  
-**TrueNAS Version:** Scale  
-**Vaultwarden URL:** https://vaultwarden-nguyen.duckdns.org
+**Vaultwarden URL:** [https://vaultwarden-nguyen.duckdns.org](https://vaultwarden-nguyen.duckdns.org)
 
 ## Overview
 
 - **Server**: TrueNAS Scale @ `192.168.10.101`
 - **Storage Pool**: `DataPool`
-- **App Storage Path**: `/mnt/DataPool/apps/vaultwarden/data`
-- **Reverse Proxy**: Nginx Proxy Manager (`192.168.10.101:81`)
-- **Domain**: `vaultwarden-nguyen.duckdns.org` (via DuckDNS)
-- **Access Method**: HTTPS via Nginx + Let's Encrypt
-- **Backup Strategy**: Automated daily encrypted GPG backups with 30-day retention
+- **App Data Path**: `/mnt/DataPool/apps/vaultwarden/data`
+- **Reverse Proxy**: Nginx Proxy Manager
+- **Domain**: `vaultwarden-nguyen.duckdns.org` (DuckDNS + Let's Encrypt)
+- **Backup**: Daily encrypted GPG backups with 30-day retention
+
+## Features
+
+- Self-hosted password manager for personal and family use
+- Organization + Collections for secure sharing
+- Automated daily encrypted backups
+- Proper VLAN segmentation (Clients & Tailscale access)
+- Integrated with full homelab stack (*arr, Jellyfin, Home Assistant, etc.)
+
+## Screenshots
+
+<div align="center">
+  <img src="screenshots/Vaultwarden-Storage-Config.png" width="600" alt="Vaultwarden Storage Configuration on TrueNAS">
+</div>
 
 ## Table of Contents
 
 - [Installation Steps](#installation-steps)
 - [Nginx Reverse Proxy Setup](#nginx-reverse-proxy-setup)
-- [SMTP Email Setup](#smtp-email-setup)
-- [Enabling Admin Interface](#enabling-admin-interface)
-- [Adding Family Members](#adding-family-members)
+- [SMTP Configuration](#smtp-configuration)
+- [Admin Interface & Adding Users](#admin-interface--adding-users)
 - [Automated Backups](#automated-backups)
-- [Network & Firewall Configuration](#network--firewall-configuration)
+- [Network & Firewall Rules](#network--firewall-rules)
+- [Setup Checklist](SETUP-CHECKLIST.md)
 - [Restore Procedure](#restore-procedure)
 
 ## Installation Steps
 
-1. Installed **Vaultwarden** via **Apps → Available Applications**
-2. Used `ixVolume` for data storage (default)
-3. Configured **ADMIN_TOKEN** environment variable
+1. Install **Vaultwarden** from **Apps → Available Applications**
+2. Use default `ixVolume` for storage
+3. Set a strong `ADMIN_TOKEN` environment variable
 
 ## Nginx Reverse Proxy Setup
 
 - Domain: `vaultwarden-nguyen.duckdns.org`
-- Forward Host: `192.168.10.101`
-- Forward Port: `8083`
-- Enabled **Websockets Support**
-- Requested Let's Encrypt SSL certificate
+- Forward to: `192.168.10.101:8083`
+- Enable **Websockets Support**
+- Request Let's Encrypt SSL certificate
 
-## SMTP Email Setup (for User Invites)
+## SMTP Configuration
 
-Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/admin`):
+Configured in Vaultwarden **Admin UI** (`/admin`):
 
-- **Enabled**: `true`
-- **Use Sendmail**: `false`
 - **Host**: `smtp.gmail.com`
-- **Secure SMTP**: `starttls`
 - **Port**: `587`
-- **From Address / Username**: `your.email@gmail.com`
+- **Secure**: `starttls`
+- **From / Username**: Your Gmail address
 - **Password**: Gmail App Password
-- **SMTP Connection Timeout**: `15`
 
-## Enabling Admin Interface
+## Admin Interface & Adding Users
 
-- Added `ADMIN_TOKEN` environment variable in the Vaultwarden app settings
-- Access: `https://vaultwarden-nguyen.duckdns.org/admin`
-
-## Adding Family Members
-
-Because email invites were not working initially:
-1. Used Admin Interface → **Create User**
-2. Manually added users to **"Nguyen Family"** Organization
-3. Assigned appropriate Collections (Shared Wi-Fi, Streaming Services, etc.)
+- Enabled via `ADMIN_TOKEN`
+- Manually create users when email invites fail
+- Created **"Nguyen Family"** Organization for shared collections (Wi-Fi, Streaming, etc.)
 
 ## Automated Backups
 
-**Script Location**: `backup-script/vaultwarden_backup.sh`
+**Script**: [`backup-script/vaultwarden_backup.sh`](backup-script/vaultwarden_backup.sh)
 
 **Features**:
-- Daily backup at 2:00 AM via TrueNAS Cron Job
-- Stops Vaultwarden pod briefly for consistent backup
-- Compresses data → Encrypts with **GPG AES256**
-- 30-day retention (automatically deletes older backups)
-- Backup folder: `/mnt/DataPool/backups/bitwarden/`
+- Scheduled daily at 2:00 AM via TrueNAS Cron Job
+- Brief pod stop for consistent SQLite backup
+- Compressed + encrypted with **GPG AES256**
+- 30-day retention policy
+- Stored in `/mnt/DataPool/backups/bitwarden/`
 
-## Network & Firewall Configuration
+## Network & Firewall Rules
 
-- Clients VLAN (`192.168.30.0/24`) → Allowed to access Vaultwarden via Nginx
+- Clients VLAN (`192.168.30.0/24`) → Allowed access to Vaultwarden
 - Tailscale (`100.64.0.0/10`) → Full access
-- Guest VLAN (`192.168.40.0/24`) → Blocked (security best practice)
+- Guest VLAN (`192.168.40.0/24`) → Blocked
 
 ## Restore Procedure
 
 1. Decrypt: `gpg -d vaultwarden_backup_*.gpg > backup.tar.gz`
 2. Stop Vaultwarden pod
-3. Extract backup to data directory
+3. Extract to data directory
 4. Restart pod
 5. Verify access
 
 ## Monitoring
 
-- Netdata: `http://192.168.10.101:20489`
+- Netdata (`http://192.168.10.101:20489`)
 - Prometheus + Grafana
-- Scrutiny (drive health)
+- Scrutiny (drive health monitoring)
 
 ## Home Lab Context
 
-This Vaultwarden instance is part of my larger homelab:
+This Vaultwarden instance runs as part of my larger homelab:
 - EdgeRouter-4 with 5 VLANs (Management, Servers, IoT, Clients, Guests)
-- 5× Raspberry Pi cluster (Home Assistant, Tailscale, Pi-hole, UniFi, Torrent)
+- 5× Raspberry Pi cluster (HA, Tailscale, Pi-hole, UniFi, Torrent)
 - TrueNAS Scale with 72TB RAIDZ2 storage
-- Reolink NVR + cameras and *arr media stack
+- Full *arr media stack, Jellyfin, Immich, Frigate, Home Assistant
