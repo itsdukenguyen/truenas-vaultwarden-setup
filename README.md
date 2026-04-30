@@ -2,11 +2,13 @@
 
 ![Vaultwarden](https://img.shields.io/badge/Vaultwarden-000000?style=for-the-badge&logo=bitwarden&logoColor=white)
 ![TrueNAS Scale](https://img.shields.io/badge/TrueNAS-Scale-00A3E0?style=for-the-badge&logo=truenas)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
+![Last Updated](https://img.shields.io/badge/Last%20Updated-April%202026-blue)
 
 Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bitwarden-compatible password manager) on my **TrueNAS Scale** server as part of my home lab.
 
-**Last Updated:** April 29, 2026  
-**Status:** Completed & Documented
+**Last Updated:** April 29, 2026
 
 ## Screenshots
 
@@ -117,5 +119,5 @@ Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/
 Part of my larger homelab:
 - EdgeRouter-4 with 5 VLANs (Management, Servers, IoT, Clients, Guests)
 - 5× Raspberry Pi cluster
-- TrueNAS Scale with 72TB RAIDZ2
+- TrueNAS Scale with 72TB RAIDZ2 storage
 - Full media stack (*arr, Jellyfin, Immich, Frigate, Home Assistant)
