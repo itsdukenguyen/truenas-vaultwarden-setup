@@ -8,15 +8,6 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 **Last Updated:** April 29, 2026  
 **Status:** Completed & Documented
 
-## Overview
-
-- **Server**: TrueNAS Scale @ `192.168.10.101`
-- **Storage Pool**: `DataPool`
-- **App Data Path**: `/mnt/DataPool/apps/vaultwarden/data`
-- **Public URL**: [https://vaultwarden-nguyen.duckdns.org](https://vaultwarden-nguyen.duckdns.org)
-- **Reverse Proxy**: Nginx Proxy Manager
-- **Backup**: Daily encrypted GPG backups with 30-day retention
-
 ## Screenshots
 
 <div align="center">
@@ -31,12 +22,21 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 <img src="screenshots/02-vaultwarden-app-settings.png" width="600" alt="Vaultwarden App Settings">
 
 **SMTP Configuration**  
-<img src="screenshots/04-vaultwarden-admin-ui-03.png" width="600" alt="SMTP Settings in Vaultwarden Admin">
+<img src="screenshots/04-vaultwarden-admin-ui-03.png" width="600" alt="SMTP Settings">
 
 **Admin Interface & Organization**  
-<img src="screenshots/05-vaultwarden-organization.png" width="600" alt="Vaultwarden Organization View">
+<img src="screenshots/05-vaultwarden-organization.png" width="600" alt="Vaultwarden Organization">
 
 </div>
+
+## Overview
+
+- **Server**: TrueNAS Scale @ `192.168.10.101`
+- **Storage Pool**: `DataPool`
+- **App Data Path**: `/mnt/DataPool/apps/vaultwarden/data`
+- **Public URL**: [https://vaultwarden-nguyen.duckdns.org](https://vaultwarden-nguyen.duckdns.org)
+- **Reverse Proxy**: Nginx Proxy Manager
+- **Backup**: Daily encrypted GPG backups with 30-day retention
 
 ## Table of Contents
 
@@ -52,8 +52,8 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 ## Installation Steps
 
 1. Install **Vaultwarden** from **Apps → Available Applications**
-2. Use default `ixVolume` for both data storages
-3. Set a strong `ADMIN_TOKEN` in environment variables
+2. Use default `ixVolume` for storage
+3. Set a strong `ADMIN_TOKEN` environment variable
 4. Enable **WebSocket** support
 
 ## Nginx Reverse Proxy Setup
@@ -71,14 +71,14 @@ Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/
 - **Host**: `smtp.gmail.com`
 - **Port**: `587`
 - **Secure SMTP**: `starttls`
-- **From Address / Username**: `duke.h.nguyen@gmail.com`
+- **From Address / Username**: Your Gmail address
 - **Password**: Gmail App Password
 
 ## Admin Interface & Family Access
 
 - Enabled via `ADMIN_TOKEN`
 - Created **"Nguyen Family"** Organization
-- Manually added family members when email invites failed
+- Manually added family members
 - Used Collections for secure sharing (Wi-Fi, Streaming Services, etc.)
 
 ## Automated Backups
@@ -86,36 +86,36 @@ Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/
 **Script**: [`backup-script/vaultwarden_backup.sh`](backup-script/vaultwarden_backup.sh)
 
 **Features**:
-- Scheduled daily at 2:00 AM via TrueNAS Cron Job
+- Daily at 2:00 AM via TrueNAS Cron Job
 - Brief pod stop for consistent backup
 - Compressed + encrypted with **GPG AES256**
-- 30-day retention (auto-deletes old backups)
-- Backup location: `/mnt/DataPool/backups/bitwarden/`
+- 30-day retention
+- Stored in `/mnt/DataPool/backups/bitwarden/`
 
 ## Network & Firewall Rules
 
-- Clients VLAN (`192.168.30.0/24`) → Allowed to access Nginx (ports 80/443)
+- Clients VLAN (`192.168.30.0/24`) → Allowed access via Nginx
 - Tailscale (`100.64.0.0/10`) → Full access
-- Guest VLAN (`192.168.40.0/24`) → Blocked for security
+- Guest VLAN (`192.168.40.0/24`) → Blocked
 
 ## Restore Procedure
 
-1. Decrypt backup: `gpg -d vaultwarden_backup_*.gpg > backup.tar.gz`
+1. Decrypt: `gpg -d vaultwarden_backup_*.gpg > backup.tar.gz`
 2. Stop Vaultwarden pod
 3. Extract to data directory
 4. Restart pod
 5. Verify access
 
-## Monitoring & Maintenance
+## Monitoring
 
 - **Netdata**: `http://192.168.10.101:20489`
 - **Prometheus + Grafana**
-- **Scrutiny** (HDD/SSD health)
+- **Scrutiny** (drive health)
 
 ## Home Lab Context
 
-This Vaultwarden instance is part of my larger homelab:
+Part of my larger homelab:
 - EdgeRouter-4 with 5 VLANs (Management, Servers, IoT, Clients, Guests)
-- 5× Raspberry Pi cluster (Home Assistant, Tailscale, Pi-hole, UniFi, Torrent)
-- TrueNAS Scale with 72TB RAIDZ2 storage
-- Full media stack (*arr, Jellyfin, Immich, Frigate, etc.)
+- 5× Raspberry Pi cluster
+- TrueNAS Scale with 72TB RAIDZ2
+- Full media stack (*arr, Jellyfin, Immich, Frigate, Home Assistant)
