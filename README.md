@@ -4,11 +4,19 @@
 ![TrueNAS Scale](https://img.shields.io/badge/TrueNAS-Scale-00A3E0?style=for-the-badge&logo=truenas)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
-![Last Updated](https://img.shields.io/badge/Last%20Updated-April%202026-blue)
 
 Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bitwarden-compatible password manager) on my **TrueNAS Scale** server as part of my home lab.
 
-**Last Updated:** April 29, 2026
+**Last Updated:** April 30, 2026
+
+## Overview
+
+- **Server**: TrueNAS Scale @ `192.168.10.101`
+- **Storage Pool**: `DataPool`
+- **App Data Path**: `/mnt/.ix-apps/app_mounts/vaultwarden/data` (ixVolume)
+- **Public URL**: [https://vaultwarden-nguyen.duckdns.org](https://vaultwarden-nguyen.duckdns.org)
+- **Reverse Proxy**: Nginx Proxy Manager
+- **Backup**: Daily encrypted GPG backups with 30-day retention
 
 ## Screenshots
 
@@ -31,74 +39,43 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 
 </div>
 
-## Overview
+## Key Features
 
-- **Server**: TrueNAS Scale @ `192.168.10.101`
-- **Storage Pool**: `DataPool`
-- **App Data Path**: `/mnt/DataPool/apps/vaultwarden/data`
-- **Public URL**: [https://vaultwarden-nguyen.duckdns.org](https://vaultwarden-nguyen.duckdns.org)
-- **Reverse Proxy**: Nginx Proxy Manager
-- **Backup**: Daily encrypted GPG backups with 30-day retention
-
-## Table of Contents
-
-- [Installation Steps](#installation-steps)
-- [Nginx Reverse Proxy Setup](#nginx-reverse-proxy-setup)
-- [SMTP Configuration](#smtp-configuration)
-- [Admin Interface & Family Access](#admin-interface--family-access)
-- [Automated Backups](#automated-backups)
-- [Network & Firewall Rules](#network--firewall-rules)
-- [Setup Checklist](SETUP-CHECKLIST.md)
-- [Restore Procedure](#restore-procedure)
-
-## Installation Steps
-
-1. Install **Vaultwarden** from **Apps → Available Applications**
-2. Use default `ixVolume` for storage
-3. Set a strong `ADMIN_TOKEN` environment variable
-4. Enable **WebSocket** support
-
-## Nginx Reverse Proxy Setup
-
-- **Domain**: `vaultwarden-nguyen.duckdns.org`
-- **Forward Host**: `192.168.10.101`
-- **Forward Port**: `8083`
-- **Websockets Support**: Enabled
-- **SSL**: Let's Encrypt certificate
-
-## SMTP Configuration
-
-Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/admin`):
-
-- **Host**: `smtp.gmail.com`
-- **Port**: `587`
-- **Secure SMTP**: `starttls`
-- **From Address / Username**: Your Gmail address
-- **Password**: Gmail App Password
-
-## Admin Interface & Family Access
-
-- Enabled via `ADMIN_TOKEN`
-- Created **"Nguyen Family"** Organization
-- Manually added family members
-- Used Collections for secure sharing (Wi-Fi, Streaming Services, etc.)
+- Self-hosted password manager for personal and family use
+- Organization + Collections for secure sharing
+- Automated daily encrypted backups (GPG AES256)
+- Proper integration with VLAN segmentation (Clients + Tailscale)
 
 ## Automated Backups
+
+**Status**: Working ✅
 
 **Script**: [`backup-script/vaultwarden_backup.sh`](backup-script/vaultwarden_backup.sh)
 
 **Features**:
-- Daily at 2:00 AM via TrueNAS Cron Job
-- Brief pod stop for consistent backup
-- Compressed + encrypted with **GPG AES256**
-- 30-day retention
-- Stored in `/mnt/DataPool/backups/bitwarden/`
+- Runs daily at **2:00 AM** via TrueNAS Cron Job
+- Uses correct ixVolume path (`/mnt/.ix-apps/app_mounts/vaultwarden/data`)
+- Creates compressed backup → Encrypts with **GPG AES256**
+- 30-day retention (automatically deletes old backups)
+- Backup location: `/mnt/DataPool/backups/bitwarden/`
 
-## Network & Firewall Rules
+## Installation Steps
 
-- Clients VLAN (`192.168.30.0/24`) → Allowed access via Nginx
-- Tailscale (`100.64.0.0/10`) → Full access
-- Guest VLAN (`192.168.40.0/24`) → Blocked
+1. Install Vaultwarden from **Apps → Available Applications**
+2. Use `ixVolume` for data storage
+3. Set strong `ADMIN_TOKEN` environment variable
+4. Configure Nginx Proxy Manager (port 8083 + WebSocket)
+5. Set up SMTP for user invites (Gmail App Password)
+
+## Network & Security
+
+- Clients VLAN (`192.168.30.0/24`) can access Vaultwarden
+- Tailscale users have full access
+- Guest VLAN is blocked
+
+## Setup Checklist
+
+See [`SETUP-CHECKLIST.md`](SETUP-CHECKLIST.md) for detailed step-by-step instructions.
 
 ## Restore Procedure
 
@@ -110,14 +87,14 @@ Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/
 
 ## Monitoring
 
-- **Netdata**: `http://192.168.10.101:20489`
-- **Prometheus + Grafana**
-- **Scrutiny** (drive health)
+- Netdata: `http://192.168.10.101:20489`
+- Prometheus + Grafana
+- Scrutiny (HDD/SSD health)
 
 ## Home Lab Context
 
-Part of my larger homelab:
+This Vaultwarden instance is part of my larger homelab including:
 - EdgeRouter-4 with 5 VLANs (Management, Servers, IoT, Clients, Guests)
-- 5× Raspberry Pi cluster
+- 5× Raspberry Pi cluster (Home Assistant, Tailscale, Pi-hole, UniFi, Torrent)
 - TrueNAS Scale with 72TB RAIDZ2 storage
-- Full media stack (*arr, Jellyfin, Immich, Frigate, Home Assistant)
+- Full media stack (*arr, Jellyfin, Immich, Frigate, etc.)
