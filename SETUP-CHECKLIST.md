@@ -1,90 +1,88 @@
 # Vaultwarden Setup Checklist - TrueNAS Scale
 
-Use this checklist to install, configure, and verify Vaultwarden in your homelab.
+Use this checklist to install, configure, verify, and maintain Vaultwarden in your homelab.
 
-**Last Updated:** April 29, 2026
+**Last Updated:** April 30, 2026  
+**Status:** Completed & Automated
 
 ## 1. Prerequisites
 
 - [ ] TrueNAS Scale is installed and up to date
 - [ ] `DataPool` storage pool exists
 - [ ] Nginx Proxy Manager is installed and running
-- [ ] DuckDNS domain `vaultwarden-nguyen.duckdns.org` is configured and pointing to your public IP
-- [ ] Ports 80 and 443 are forwarded on EdgeRouter-4 to TrueNAS
-- [ ] Gmail account ready with an **App Password** for SMTP
-- [ ] Backup directory created: `/mnt/DataPool/backups/bitwarden`
+- [ ] DuckDNS domain `vaultwarden-nguyen.duckdns.org` is configured
+- [ ] Ports 80 and 443 forwarded on EdgeRouter-4 to TrueNAS
+- [ ] Gmail account with **App Password** ready for SMTP
+- [ ] Backup directory exists: `/mnt/DataPool/backups/bitwarden`
 
 ## 2. Vaultwarden Installation
 
 - [ ] Install **Vaultwarden** from **Apps → Available Applications**
 - [ ] Storage Configuration:
-  - Use `ixVolume` for both "Vaultwarden Data Storage" and "Postgres Data Storage"
+  - Use `ixVolume (Dataset created automatically by the system)` for both Data Storage and Postgres Data Storage
   - Leave **Enable ACL** unchecked
-- [ ] Set environment variable:
-  - `ADMIN_TOKEN` = (generate a strong random string)
+- [ ] Add environment variable: `ADMIN_TOKEN` = (strong random string)
 - [ ] Enable **WebSocket** support
 - [ ] Deploy the app
 
 ## 3. Nginx Proxy Manager Configuration
 
 - [ ] Create new Proxy Host
-- [ ] Domain Names: `vaultwarden-nguyen.duckdns.org`
+- [ ] Domain: `vaultwarden-nguyen.duckdns.org`
 - [ ] Forward Hostname/IP: `192.168.10.101`
 - [ ] Forward Port: `8083`
 - [ ] Enable **Websockets Support**
 - [ ] Request **Let's Encrypt** SSL certificate
-- [ ] (Optional) Add security headers in Custom Nginx Configuration
 
-## 4. SMTP Configuration (Required for User Invites)
+## 4. SMTP Configuration (for User Invites)
 
-- [ ] Access Vaultwarden Admin UI: `https://vaultwarden-nguyen.duckdns.org/admin`
-- [ ] Go to **Settings → SMTP Email Settings**
+- [ ] Access Admin UI: `https://vaultwarden-nguyen.duckdns.org/admin`
+- [ ] Go to **SMTP Email Settings**
 - [ ] Configure:
-  - **Enabled**: Checked
-  - **Host**: `smtp.gmail.com`
-  - **Secure SMTP**: `starttls`
-  - **Port**: `587`
-  - **From Address**: `your-email@gmail.com`
-  - **Username**: `your-email@gmail.com`
-  - **Password**: Gmail App Password
-- [ ] Test SMTP if possible
+  - Enabled: Checked
+  - Host: `smtp.gmail.com`
+  - Secure SMTP: `starttls`
+  - Port: `587`
+  - From Address / Username: Your Gmail address
+  - Password: Gmail App Password
 
 ## 5. Admin Interface & Family Access
 
 - [ ] Confirm Admin UI is accessible
 - [ ] Create **"Nguyen Family"** Organization
-- [ ] Create Collections (e.g., "Shared Wi-Fi", "Streaming Services", "Home Automation")
+- [ ] Create Collections (e.g., "Shared Wi-Fi", "Streaming Services")
 - [ ] Manually create user accounts for family members
-- [ ] Add users to the Organization and assign appropriate Collections
-- [ ] Instruct users to change their temporary password on first login
+- [ ] Add users to Organization and assign Collections
+- [ ] Instruct users to change temporary password on first login
 
-## 6. Automated Backups
+## 6. Automated Backups (Working ✅)
 
-- [ ] Create secure passphrase file: `/mnt/DataPool/backups/bitwarden_passphrase.txt`
-- [ ] Place `vaultwarden_backup.sh` in `/mnt/DataPool/backups/`
-- [ ] Make script executable
-- [ ] Create Cron Job in TrueNAS:
-  - Description: "Vaultwarden Daily Backup"
+- [ ] Passphrase file created: `/mnt/DataPool/backups/bitwarden_passphrase.txt` (permissions 600)
+- [ ] Backup script created: `/mnt/DataPool/backups/vaultwarden_backup.sh`
+- [ ] Script tested successfully (creates encrypted `.gpg` files)
+- [ ] Cron Job created in TrueNAS UI:
+  - Description: `Vaultwarden Daily Backup`
   - Command: `/mnt/DataPool/backups/vaultwarden_backup.sh`
   - User: `root`
   - Schedule: Daily at **02:00**
-- [ ] Run the job manually once to verify it works
+
+**Backup Location**: `/mnt/DataPool/backups/bitwarden/`
 
 ## 7. Network & Security Verification
 
 - [ ] Clients VLAN (`192.168.30.0/24`) can access `https://vaultwarden-nguyen.duckdns.org`
-- [ ] Tailscale devices can access Vaultwarden
-- [ ] Guest VLAN (`192.168.40.0/24`) is blocked from accessing Vaultwarden
-- [ ] 2FA is enabled on all important accounts
+- [ ] Tailscale devices have access
+- [ ] Guest VLAN (`192.168.40.0/24`) is blocked from Vaultwarden
+- [ ] 2FA enabled on important accounts
 
-## 8. Final Verification & Testing
+## 8. Final Verification
 
-- [ ] Can successfully log in via web UI
-- [ ] Bitwarden app and browser extension work with custom server URL
-- [ ] Family members can access shared collections
-- [ ] Backup script creates encrypted `.gpg` files
-- [ ] Old backups older than 30 days are automatically deleted
+- [ ] Web UI accessible at `https://vaultwarden-nguyen.duckdns.org`
+- [ ] Bitwarden app and browser extension work with custom server
+- [ ] Family members can log in and access shared collections
+- [ ] Daily backups are running and encrypted
+- [ ] Old backups (>30 days) are automatically cleaned up
 
 ---
 
-**Tip**: Keep this checklist updated as you make changes to the setup.
+**Tip**: Run `/mnt/DataPool/backups/vaultwarden_backup.sh` manually anytime to test.
