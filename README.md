@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Status](https://img.shields.io/badge/Status-Completed-brightgreen)
 
-Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bitwarden-compatible password manager) on my **TrueNAS Scale** server as part of my home lab.
+Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bitwarden-compatible password manager) on my **TrueNAS Scale** server.
 
 **Last Updated:** April 30, 2026
 
@@ -14,9 +14,9 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 - [Setup Checklist](SETUP-CHECKLIST.md)
 - [EdgeRouter-4 Firewall Rules](edge-router-firewall-rules.md)
 - [VLAN Overview](docs/vlan-overview.md)
+- [Restore Guide](docs/restore-guide.md)
 - [Backup Script](scripts/vaultwarden_backup.sh)
 - [Roadmap](ROADMAP.md)
-- [.gitignore](.gitignore)
 
 ## Screenshots
 
@@ -44,7 +44,6 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 - **Server**: TrueNAS Scale @ `192.168.10.101`
 - **Data Path**: `/mnt/.ix-apps/app_mounts/vaultwarden/data` (ixVolume)
 - **Public URL**: [https://vaultwarden-nguyen.duckdns.org](https://vaultwarden-nguyen.duckdns.org)
-- **Reverse Proxy**: Nginx Proxy Manager
 - **Backup**: Daily encrypted GPG backups with 30-day retention
 
 ## Key Features
@@ -54,26 +53,9 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 - Secure access from Clients VLAN and Tailscale
 - Full integration with my homelab VLAN segmentation
 
-## Documentation
+## Restore Guide
 
-- **[Setup Checklist](SETUP-CHECKLIST.md)** — Step-by-step installation guide
-- **[EdgeRouter-4 Firewall Rules](edge-router-firewall-rules.md)** — All firewall rules used
-- **[VLAN Overview](docs/vlan-overview.md)** — Network architecture
-- **[Automated Backups](scripts/vaultwarden_backup.sh)** — Script + Cron Job
-- **[Roadmap](ROADMAP.md)** — Future improvements
-
-## Installation Steps
-
-1. Install **Vaultwarden** from **Apps → Available Applications**
-2. Use `ixVolume` for storage
-3. Set strong `ADMIN_TOKEN` environment variable
-4. Configure Nginx Proxy Manager (port 8083 + WebSocket)
-
-## Automated Backups
-
-**Status**: Working ✅  
-**Script**: [`scripts/vaultwarden_backup.sh`](scripts/vaultwarden_backup.sh)  
-**Schedule**: Daily at 2:00 AM via TrueNAS Cron Job
+See detailed restore instructions in [`docs/restore-guide.md`](docs/restore-guide.md).
 
 ## Home Lab Context
 
