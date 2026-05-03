@@ -15,6 +15,8 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 - [EdgeRouter-4 Firewall Rules](edge-router-firewall-rules.md)
 - [VLAN Overview](docs/vlan-overview.md)
 - [Backup Script](scripts/vaultwarden_backup.sh)
+- [Roadmap](ROADMAP.md)
+- [.gitignore](.gitignore)
 
 ## Screenshots
 
@@ -26,7 +28,7 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 **Nginx Proxy Host**  
 <img src="screenshots/03-nginx-proxy-host-01.png" width="600" alt="Nginx Proxy Host">
 
-**Vaultwarden App Settings**  
+**App Settings**  
 <img src="screenshots/02-vaultwarden-app-settings.png" width="600" alt="App Settings">
 
 **SMTP Configuration**  
@@ -52,74 +54,31 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 - Secure access from Clients VLAN and Tailscale
 - Full integration with my homelab VLAN segmentation
 
+## Documentation
+
+- **[Setup Checklist](SETUP-CHECKLIST.md)** — Step-by-step installation guide
+- **[EdgeRouter-4 Firewall Rules](edge-router-firewall-rules.md)** — All firewall rules used
+- **[VLAN Overview](docs/vlan-overview.md)** — Network architecture
+- **[Automated Backups](scripts/vaultwarden_backup.sh)** — Script + Cron Job
+- **[Roadmap](ROADMAP.md)** — Future improvements
+
 ## Installation Steps
 
 1. Install **Vaultwarden** from **Apps → Available Applications**
-2. Use `ixVolume` for both Data and Postgres storage
+2. Use `ixVolume` for storage
 3. Set strong `ADMIN_TOKEN` environment variable
-4. Enable **WebSocket** support
-
-## Nginx Reverse Proxy Setup
-
-- **Domain**: `vaultwarden-nguyen.duckdns.org`
-- **Forward Host**: `192.168.10.101`
-- **Forward Port**: `8083`
-- **Websockets Support**: Enabled
-- **SSL**: Let's Encrypt certificate
-
-## SMTP Configuration
-
-Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/admin`):
-
-- **Host**: `smtp.gmail.com`
-- **Port**: `587`
-- **Secure SMTP**: `starttls`
-- **From Address / Username**: Your Gmail address
-- **Password**: Gmail App Password
-
-## Admin Interface & Family Access
-
-- Enabled via `ADMIN_TOKEN`
-- Created **"Nguyen Family"** Organization
-- Manually added family members
-- Used Collections for secure sharing (Wi-Fi, Streaming Services, etc.)
+4. Configure Nginx Proxy Manager (port 8083 + WebSocket)
 
 ## Automated Backups
 
-**Script**: [`scripts/vaultwarden_backup.sh`](scripts/vaultwarden_backup.sh)
-
-**Features**:
-- Daily at 2:00 AM via TrueNAS Cron Job
-- Uses correct ixVolume path
-- Compressed + encrypted with **GPG AES256**
-- 30-day retention
-
-## Network & Firewall Rules
-
-See detailed rules in [`edge-router-firewall-rules.md`](edge-router-firewall-rules.md)
-
-- Clients VLAN (`192.168.30.0/24`) → Allowed via Nginx
-- Tailscale (`100.64.0.0/10`) → Full access
-- Guest VLAN (`192.168.40.0/24`) → Blocked
-
-## Restore Procedure
-
-1. Decrypt: `gpg -d vaultwarden_backup_*.gpg > backup.tar.gz`
-2. Stop Vaultwarden pod
-3. Extract to data directory
-4. Restart pod
-5. Verify access
-
-## Monitoring
-
-- **Netdata**: `http://192.168.10.101:20489`
-- **Prometheus + Grafana**
-- **Scrutiny** (drive health)
+**Status**: Working ✅  
+**Script**: [`scripts/vaultwarden_backup.sh`](scripts/vaultwarden_backup.sh)  
+**Schedule**: Daily at 2:00 AM via TrueNAS Cron Job
 
 ## Home Lab Context
 
 This Vaultwarden instance is part of my larger homelab:
 - EdgeRouter-4 with 5 VLANs (Management, Servers, IoT, Clients, Guests)
-- 5× Raspberry Pi cluster (Home Assistant, Tailscale, Pi-hole, UniFi, Torrent)
+- 5× Raspberry Pi cluster
 - TrueNAS Scale with 72TB RAIDZ2 storage
 - Full media stack (*arr, Jellyfin, Immich, Frigate, Home Assistant)
