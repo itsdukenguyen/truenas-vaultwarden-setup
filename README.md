@@ -61,20 +61,28 @@ Complete guide for installing, configuring, and maintaining **Vaultwarden** (Bit
 
 ## Nginx Reverse Proxy Setup
 
-- Domain: `vaultwarden-nguyen.duckdns.org`
-- Forward to: `192.168.10.101:8083`
-- Enable **Websockets Support**
-- Let's Encrypt SSL certificate
+- **Domain**: `vaultwarden-nguyen.duckdns.org`
+- **Forward Host**: `192.168.10.101`
+- **Forward Port**: `8083`
+- **Websockets Support**: Enabled
+- **SSL**: Let's Encrypt certificate
 
 ## SMTP Configuration
 
-Configured in **Vaultwarden Admin UI** (`/admin`):
+Configured in **Vaultwarden Admin UI** (`https://vaultwarden-nguyen.duckdns.org/admin`):
 
-- Host: `smtp.gmail.com`
-- Port: `587`
-- Secure: `starttls`
-- Username/From: Your Gmail address
-- Password: Gmail App Password
+- **Host**: `smtp.gmail.com`
+- **Port**: `587`
+- **Secure SMTP**: `starttls`
+- **From Address / Username**: Your Gmail address
+- **Password**: Gmail App Password
+
+## Admin Interface & Family Access
+
+- Enabled via `ADMIN_TOKEN`
+- Created **"Nguyen Family"** Organization
+- Manually added family members
+- Used Collections for secure sharing (Wi-Fi, Streaming Services, etc.)
 
 ## Automated Backups
 
@@ -83,34 +91,35 @@ Configured in **Vaultwarden Admin UI** (`/admin`):
 **Features**:
 - Daily at 2:00 AM via TrueNAS Cron Job
 - Uses correct ixVolume path
-- Compressed + encrypted with GPG AES256
+- Compressed + encrypted with **GPG AES256**
 - 30-day retention
 
-## Network & Firewall
+## Network & Firewall Rules
 
 See detailed rules in [`edge-router-firewall-rules.md`](edge-router-firewall-rules.md)
 
 - Clients VLAN (`192.168.30.0/24`) → Allowed via Nginx
-- Tailscale → Full access
-- Guest VLAN → Blocked
+- Tailscale (`100.64.0.0/10`) → Full access
+- Guest VLAN (`192.168.40.0/24`) → Blocked
 
 ## Restore Procedure
 
 1. Decrypt: `gpg -d vaultwarden_backup_*.gpg > backup.tar.gz`
-2. Stop pod
+2. Stop Vaultwarden pod
 3. Extract to data directory
 4. Restart pod
+5. Verify access
 
 ## Monitoring
 
-- Netdata: `http://192.168.10.101:20489`
-- Prometheus + Grafana
-- Scrutiny (drive health)
+- **Netdata**: `http://192.168.10.101:20489`
+- **Prometheus + Grafana**
+- **Scrutiny** (drive health)
 
 ## Home Lab Context
 
 This Vaultwarden instance is part of my larger homelab:
 - EdgeRouter-4 with 5 VLANs (Management, Servers, IoT, Clients, Guests)
-- 5× Raspberry Pi cluster (HA, Tailscale, Pi-hole, UniFi, Torrent)
+- 5× Raspberry Pi cluster (Home Assistant, Tailscale, Pi-hole, UniFi, Torrent)
 - TrueNAS Scale with 72TB RAIDZ2 storage
-- Full media stack (*arr, Jellyfin, Immich, Frigate, etc.)
+- Full media stack (*arr, Jellyfin, Immich, Frigate, Home Assistant)

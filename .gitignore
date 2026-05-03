@@ -1,0 +1,11 @@
+# TrueNAS specific
+*.bak
+*.tmp
+.DS_Store
+
+# Backups (don't commit real backups)
+backups/*.gpg
+*.tar.gz
+
+# Logs
+*.log
