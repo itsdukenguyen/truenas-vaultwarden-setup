@@ -91,6 +91,12 @@ See [`SETUP-CHECKLIST.md`](SETUP-CHECKLIST.md) for detailed step-by-step instruc
 - Prometheus + Grafana
 - Scrutiny (HDD/SSD health)
 
+## Additional Documentation
+
+- [Setup Checklist](SETUP-CHECKLIST.md)
+- [EdgeRouter-4 Firewall Rules](edge-router-firewall-rules.md)
+- [Backup Script](backup-script/vaultwarden_backup.sh)
+
 ## Home Lab Context
 
 This Vaultwarden instance is part of my larger homelab including:
