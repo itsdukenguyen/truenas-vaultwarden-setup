@@ -21,22 +21,31 @@ cd /mnt/DataPool/backups/bitwarden
 
 # Decrypt the latest backup (replace with your actual filename)
 gpg -d vaultwarden_backup_YYYYMMDD_HHMMSS.tar.gz.gpg > /tmp/vaultwarden_restore.tar.gz
+```
 
+### 2. Stop Vaultwarden
+```bash
 # Stop the Vaultwarden pod
 k3s kubectl -n ix-vaultwarden scale deployment vaultwarden --replicas=0
 sleep 10
+```
 
+### 3. Extract the Backup
+```bash
 # Remove old data (be careful!)
 rm -rf /mnt/.ix-apps/app_mounts/vaultwarden/data/*
 
 # Extract the backup
 tar xzf /tmp/vaultwarden_restore.tar.gz -C /mnt/.ix-apps/app_mounts/vaultwarden/data
-
+```
+### 4. Restart Vaultwarden
+```bash
 # Start the pod again
 k3s kubectl -n ix-vaultwarden scale deployment vaultwarden --replicas=1
+```
 
-# Verify Restore
-Wait 30–60 seconds
-Access: https://vaultwarden-nguyen.duckdns.org
-Log in and check that all items, folders, and collections are present
-Test Bitwarden app and browser extension
+### 5. Verify Restore
+- Wait 30–60 seconds
+- Access: https://vaultwarden-nguyen.duckdns.org
+- Log in and check that all items, folders, and collections are present
+- Test Bitwarden app and browser extension
