@@ -41,7 +41,7 @@ set firewall name LAN_IN rule 22 source address 192.168.1.0/24
 set firewall name LAN_IN rule 22 state established enable
 set firewall name LAN_IN rule 22 state related enable
 ```
-##2. WAN_IN Rules (External Access)
+## 2. WAN_IN Rules (External Access)
 ```bash
 #Nginx HTTPS + Vaultwarden - WAN_IN Rules (External Access)
 set firewall name WAN_IN rule 29 action accept
