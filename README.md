@@ -1,5 +1,7 @@
 # Vaultwarden on TrueNAS Scale - Home Lab Setup
 
+![Vaultwarden Banner](https://github.com/itsdukenguyen/truenas-vaultwarden-setup/blob/main/screenshots/banner.jpg?raw=true)
+
 ![Vaultwarden](https://img.shields.io/badge/Vaultwarden-000000?style=for-the-badge&logo=bitwarden&logoColor=white)
 ![TrueNAS Scale](https://img.shields.io/badge/TrueNAS-Scale-00A3E0?style=for-the-badge&logo=truenas)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
