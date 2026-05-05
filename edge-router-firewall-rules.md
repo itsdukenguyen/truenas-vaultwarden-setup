@@ -41,6 +41,8 @@ set firewall name LAN_IN rule 22 source address 192.168.1.0/24
 set firewall name LAN_IN rule 22 state established enable
 set firewall name LAN_IN rule 22 state related enable
 ```
+
+
 ## 2. WAN_IN Rules (External Access)
 ```bash
 #Nginx HTTPS + Vaultwarden - WAN_IN Rules (External Access)
@@ -54,6 +56,7 @@ set firewall name WAN_IN rule 29 state new enable
 set firewall name WAN_IN rule 29 state related enable
 ```
 
+
 ## 3. GUEST_IN Rules (Isolation)
 ```bash
 # Block Guest VLAN to VLAN10 (including Vaultwarden) - GUEST_IN Rules (Isolation)
@@ -62,6 +65,8 @@ set firewall name GUEST_IN rule 24 description "Block Guest to VLAN10 Services"
 set firewall name GUEST_IN rule 24 destination address 192.168.10.0/24
 set firewall name GUEST_IN rule 24 source address 192.168.40.0/24
 ```
+
+
 ## 4. WAN_OUT - SMTP Outbound (for Email Invites)
 ```bash
 set firewall name WAN_OUT rule 10 action accept
